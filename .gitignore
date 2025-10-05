@@ -42,7 +42,7 @@ target
 
 # Other
 .gitignore
-*.txt
+*.md
 
 ### Mac OS ###
 .DS_Store
