@@ -1,0 +1,10 @@
+### IntelliJ IDEA ###
+.gitignore
+.idea/
+target/
+*.txt
+*.iws
+*.iml
+*.ipr
+### Mac OS ###
+.DS_Store
