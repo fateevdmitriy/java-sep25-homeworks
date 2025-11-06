@@ -13,7 +13,6 @@ plugins {
 
 allprojects {
     group = "ru.otus.java.prof"
-    version = "1.0-SNAPSHOT"
 
     repositories {
         mavenLocal()
