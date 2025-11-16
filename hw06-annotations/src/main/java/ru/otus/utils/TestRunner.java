@@ -1,0 +1,93 @@
+package ru.otus.utils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import ru.otus.annotations.*;
+import ru.otus.reflection.ReflectionHelper;
+
+@SuppressWarnings({"java:S106", "java:S5411", "java:S112"})
+public class TestRunner {
+
+    private TestRunner() {}
+
+    public static void run(Class<?> testClazz) {
+        String testClassName = testClazz.getSimpleName();
+        System.out.println("Starting to run tests from class " + testClassName);
+        Set<Method> testMethods = getAnnotatedMethods(testClazz, Test.class);
+        if (testMethods.isEmpty()) {
+            System.out.println("No methods found in class " + testClassName);
+            return;
+        }
+        Map<String, Boolean> testResults = new HashMap<>();
+
+        for (Method methodTest : testMethods) {
+            Object object;
+            boolean testPassed = true;
+            try {
+                object = ReflectionHelper.instantiate(testClazz);
+                callAnnotatedMethods(testClazz, object, Before.class);
+                callMethod(methodTest, object);
+                callAnnotatedMethods(testClazz, object, After.class);
+            } catch (RuntimeException e) {
+                testPassed = false;
+            } finally {
+                testResults.put(methodTest.getName(), testPassed);
+            }
+        }
+
+        printResults(testResults);
+    }
+
+    private static Set<Method> getAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotationClass) {
+        Set<Method> annotatedMethods = new HashSet<>();
+        Method[] methods = type.getDeclaredMethods();
+
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+        return annotatedMethods;
+    }
+
+    private static void callAnnotatedMethods(
+            Class<?> type, Object testInstance, Class<? extends Annotation> annotationClass) throws RuntimeException {
+        for (Method method : getAnnotatedMethods(type, annotationClass)) {
+            callMethod(method, testInstance);
+        }
+    }
+
+    private static void callMethod(Method method, Object obj) throws RuntimeException {
+        try {
+            method.invoke(obj);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void printResults(Map<String, Boolean> testResults) {
+        StringBuilder sb = new StringBuilder("Test Results:");
+        sb.append(System.lineSeparator())
+                .append("------------------------------")
+                .append(System.lineSeparator());
+        testResults.forEach((methodName, result) -> sb.append("Test: '")
+                .append(methodName)
+                .append("': ")
+                .append((result ? "SUCCESS" : "FAILED"))
+                .append(System.lineSeparator()));
+        sb.append("------------------------------").append(System.lineSeparator());
+        sb.append("Tests total: ").append(testResults.size()).append(System.lineSeparator());
+        sb.append("Successful tests: ")
+                .append(testResults.values().stream().filter(result -> result).count())
+                .append(System.lineSeparator());
+        sb.append("Failed tests: ")
+                .append(testResults.values().stream().filter(result -> !result).count())
+                .append(System.lineSeparator());
+        System.out.println(sb.toString());
+    }
+}
