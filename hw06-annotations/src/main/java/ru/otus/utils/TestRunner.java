@@ -20,23 +20,27 @@ public class TestRunner {
         System.out.println("Starting to run tests from class " + testClassName);
         Set<Method> testMethods = getAnnotatedMethods(testClazz, Test.class);
         if (testMethods.isEmpty()) {
-            System.out.println("No methods found in class " + testClassName);
+            System.out.println("No methods with @Test annotation found in class " + testClassName);
             return;
         }
         Map<String, Boolean> testResults = new HashMap<>();
 
-        for (Method methodTest : testMethods) {
-            Object object;
+        for (Method testMethod : testMethods) {
+            Object testObject = null;
             boolean testPassed = true;
             try {
-                object = ReflectionHelper.instantiate(testClazz);
-                callAnnotatedMethods(testClazz, object, Before.class);
-                callMethod(methodTest, object);
-                callAnnotatedMethods(testClazz, object, After.class);
+                testObject = ReflectionHelper.instantiate(testClazz);
+                callAnnotatedMethods(testClazz, testObject, Before.class);
+                callMethod(testMethod, testObject);
             } catch (RuntimeException e) {
                 testPassed = false;
             } finally {
-                testResults.put(methodTest.getName(), testPassed);
+                try {
+                    callAnnotatedMethods(testClazz, testObject, After.class);
+                } catch (RuntimeException e) {
+                    testPassed = false;
+                }
+                testResults.put(testMethod.getName(), testPassed);
             }
         }
 
@@ -56,15 +60,16 @@ public class TestRunner {
     }
 
     private static void callAnnotatedMethods(
-            Class<?> type, Object testInstance, Class<? extends Annotation> annotationClass) throws RuntimeException {
-        for (Method method : getAnnotatedMethods(type, annotationClass)) {
-            callMethod(method, testInstance);
+            Class<?> type, Object objectTest, Class<? extends Annotation> annotationClass) throws RuntimeException {
+        Set<Method> annotatedMethods = getAnnotatedMethods(type, annotationClass);
+        for (Method method : annotatedMethods) {
+            callMethod(method, objectTest);
         }
     }
 
-    private static void callMethod(Method method, Object obj) throws RuntimeException {
+    private static void callMethod(Method method, Object object) throws RuntimeException {
         try {
-            method.invoke(obj);
+            method.invoke(object);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
