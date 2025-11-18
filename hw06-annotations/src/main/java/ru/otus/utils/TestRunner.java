@@ -23,6 +23,8 @@ public class TestRunner {
             System.out.println("No methods with @Test annotation found in class " + testClassName);
             return;
         }
+        Set<Method> beforeMethods = getAnnotatedMethods(testClazz, Before.class);
+        Set<Method> afterMethods = getAnnotatedMethods(testClazz, After.class);
         Map<String, Boolean> testResults = new HashMap<>();
 
         for (Method testMethod : testMethods) {
@@ -30,13 +32,13 @@ public class TestRunner {
             boolean testPassed = true;
             try {
                 testObject = ReflectionHelper.instantiate(testClazz);
-                callAnnotatedMethods(testClazz, testObject, Before.class);
+                callAnnotatedMethods(beforeMethods, testObject);
                 callMethod(testMethod, testObject);
             } catch (RuntimeException e) {
                 testPassed = false;
             } finally {
                 try {
-                    callAnnotatedMethods(testClazz, testObject, After.class);
+                    callAnnotatedMethods(afterMethods, testObject);
                 } catch (RuntimeException e) {
                     testPassed = false;
                 }
@@ -59,9 +61,7 @@ public class TestRunner {
         return annotatedMethods;
     }
 
-    private static void callAnnotatedMethods(
-            Class<?> type, Object objectTest, Class<? extends Annotation> annotationClass) throws RuntimeException {
-        Set<Method> annotatedMethods = getAnnotatedMethods(type, annotationClass);
+    private static void callAnnotatedMethods(Set<Method> annotatedMethods, Object objectTest) throws RuntimeException {
         for (Method method : annotatedMethods) {
             callMethod(method, objectTest);
         }
