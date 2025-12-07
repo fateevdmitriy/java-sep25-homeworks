@@ -3,6 +3,7 @@ include("hw01-gradle")
 include("hw04-generics")
 include("hw06-annotations")
 include("hw08-gc")
+include("hw10-aot")
 
 pluginManagement {
     val jgitver: String by settings
@@ -27,3 +28,4 @@ pluginManagement {
 }
 
 include("hw08-gc")
+include("hw10-aot")
