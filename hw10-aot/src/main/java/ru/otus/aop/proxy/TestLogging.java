@@ -10,24 +10,24 @@ public class TestLogging implements TestLoggingInterface {
     @Log
     @Override
     public void calculation(int param1) {
-        // logger.info("Run calculation({})", param1);
+        logger.info("Run calculation({})", param1);
     }
 
     @Log
     @Override
     public void calculation(int param1, int param2) {
-        // logger.info("Run calculation({}, {})", param1, param2);
+        logger.info("Run calculation({}, {})", param1, param2);
     }
 
     @Override
     public void calculation(int param1, int param2, String param3) {
-        // logger.info("Run calculation({}, {}, {} )", param1, param2, param3);
+        logger.info("Run calculation({}, {}, {} )", param1, param2, param3);
     }
 
     @Log
     @Override
     public void calculation(int param1, int param2, String param3, boolean param4) {
-        // logger.info("Run calculation({}, {}, {}, {})", param1, param2, param3, param4);
+        logger.info("Run calculation({}, {}, {}, {})", param1, param2, param3, param4);
     }
 
     @Override
