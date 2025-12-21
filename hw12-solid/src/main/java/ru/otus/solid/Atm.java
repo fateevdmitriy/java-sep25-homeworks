@@ -1,22 +1,18 @@
 package ru.otus.solid;
 
-import ru.otus.solid.banknoteTrays.*;
-import ru.otus.solid.banknotes.Banknote;
-
 import java.util.*;
+import ru.otus.solid.banknotes.Banknote;
+import ru.otus.solid.trays.*;
 
 public class Atm {
-    private final String atmId;
     private final Map<Denomination, BanknoteTray> trays;
 
-    public Atm(String atmId) {
-        this.atmId = atmId;
+    public Atm() {
         this.trays = prepareTrays();
     }
 
     private Map<Denomination, BanknoteTray> prepareTrays() {
         Map<Denomination, BanknoteTray> preparedTrays = new EnumMap<>(Denomination.class);
-        preparedTrays.put(Denomination.FIVE, new BanknoteTrayFive());
         preparedTrays.put(Denomination.TEN, new BanknoteTrayTen());
         preparedTrays.put(Denomination.FIFTY, new BanknoteTrayFifty());
         preparedTrays.put(Denomination.ONE_HUNDRED, new BanknoteTrayOneHundred());
@@ -26,10 +22,6 @@ public class Atm {
         preparedTrays.put(Denomination.TWO_THOUSAND, new BanknoteTrayTwoThousand());
         preparedTrays.put(Denomination.FIVE_THOUSAND, new BanknoteTrayFiveThousand());
         return preparedTrays;
-    }
-
-    public String getAtmId() {
-        return atmId;
     }
 
     public int getBalance() {
@@ -43,6 +35,20 @@ public class Atm {
         return allTraysBalance;
     }
 
+    //
+    public Map<Denomination, Integer> getEachTrayBalance() {
+        Map<Denomination, Integer> denominationToBalance = new EnumMap<>(Denomination.class);
+        for (BanknoteTray banknoteTray : trays.values()) {
+            denominationToBalance.put(banknoteTray.getDenomination(), banknoteTray.getBalance());
+        }
+        return denominationToBalance;
+    }
+
+    public void putMoney(Banknote banknote) {
+        Set<Banknote> money = Collections.singleton(banknote);
+        putMoney(money);
+    }
+
     public void putMoney(Set<Banknote> money) {
         BanknoteTray targetTray;
         List<String> errorMessages = new ArrayList<>();
@@ -52,12 +58,14 @@ public class Atm {
                 targetTray = trays.get(banknoteDenomination);
                 boolean putBanknoteResult = targetTray.putBanknote(banknote);
                 if (!putBanknoteResult) {
-                    errorMessages.add(String.format("Банкнота с номером %s не может быть принята, ошибка добавления банкноты в лоток.",
-                            banknote.getSerialNumber()));
+                    errorMessages.add(String.format(
+                            "Банкнота номинала %s не может быть принята, ошибка добавления банкноты в лоток.",
+                            banknote.getDenomination().getValue()));
                 }
             } else {
-                errorMessages.add(String.format("Банкнота с номером %s не может быть принята, недопустимый номинал.",
-                        banknote.getSerialNumber()));
+                errorMessages.add(String.format(
+                        "Банкнота номинала %s не может быть принята, недопустимый номинал.",
+                        banknote.getDenomination().getValue()));
             }
         }
         if (!errorMessages.isEmpty()) {
@@ -68,7 +76,8 @@ public class Atm {
     public Set<Banknote> getMoney(int requestedSum) {
         Set<Banknote> resultBanknotes = new HashSet<>();
         int remainSum = requestedSum;
-        List<Denomination> reversedDenominations = Arrays.asList(Denomination.values()).reversed();
+        List<Denomination> reversedDenominations =
+                Arrays.asList(Denomination.values()).reversed();
 
         for (Denomination denomination : reversedDenominations) {
             int denominationValue = denomination.getValue(); // номинал банкноты
@@ -82,7 +91,9 @@ public class Atm {
                 remainSum = requestedSum - divisionInt * denominationValue;
             }
 
-            if (divisionReminder == 0) { break; }
+            if (divisionReminder == 0) {
+                break;
+            }
         }
 
         if (remainSum != 0) {
@@ -90,5 +101,4 @@ public class Atm {
         }
         return resultBanknotes;
     }
-
 }
