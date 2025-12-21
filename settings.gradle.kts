@@ -29,3 +29,4 @@ pluginManagement {
 
 include("hw08-gc")
 include("hw10-aot")
+include("hw12-solid")
