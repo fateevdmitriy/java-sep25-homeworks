@@ -2,6 +2,7 @@ package ru.otus.solid;
 
 import java.util.*;
 import ru.otus.solid.banknotes.Banknote;
+import ru.otus.solid.banknotes.BanknoteImpl;
 import ru.otus.solid.trays.*;
 
 public class Atm {
@@ -11,17 +12,12 @@ public class Atm {
         this.trays = prepareTrays();
     }
 
-    private Map<Denomination, BanknoteTray> prepareTrays() {
-        Map<Denomination, BanknoteTray> preparedTrays = new EnumMap<>(Denomination.class);
-        preparedTrays.put(Denomination.TEN, new BanknoteTrayTen());
-        preparedTrays.put(Denomination.FIFTY, new BanknoteTrayFifty());
-        preparedTrays.put(Denomination.ONE_HUNDRED, new BanknoteTrayOneHundred());
-        preparedTrays.put(Denomination.TWO_HUNDRED, new BanknoteTrayTwoHundred());
-        preparedTrays.put(Denomination.FIVE_HUNDRED, new BanknoteTrayFiveHundred());
-        preparedTrays.put(Denomination.ONE_THOUSAND, new BanknoteTrayOneThousand());
-        preparedTrays.put(Denomination.TWO_THOUSAND, new BanknoteTrayTwoThousand());
-        preparedTrays.put(Denomination.FIVE_THOUSAND, new BanknoteTrayFiveThousand());
-        return preparedTrays;
+    private Set<Banknote> preloadBanknotes(Denomination denomination, int preloadAmount) {
+        Set<Banknote> resultBanknotes = new HashSet<>();
+        for (int i = 0; i < preloadAmount; i++) {
+            resultBanknotes.add(new BanknoteImpl(denomination));
+        }
+        return resultBanknotes;
     }
 
     public int getBalance() {
@@ -35,7 +31,6 @@ public class Atm {
         return allTraysBalance;
     }
 
-    //
     public Map<Denomination, Integer> getEachTrayBalance() {
         Map<Denomination, Integer> denominationToBalance = new EnumMap<>(Denomination.class);
         for (BanknoteTray banknoteTray : trays.values()) {
@@ -88,7 +83,7 @@ public class Atm {
                 BanknoteTray targetTray = trays.get(denomination);
                 Set<Banknote> getBanknotes = targetTray.getBanknotes(divisionInt);
                 resultBanknotes.addAll(getBanknotes);
-                remainSum = requestedSum - divisionInt * denominationValue;
+                remainSum = remainSum - divisionInt * denominationValue;
             }
 
             if (divisionReminder == 0) {
@@ -100,5 +95,43 @@ public class Atm {
             // TODO бросать исключение: Запрошенная сумма не может быть выдана.
         }
         return resultBanknotes;
+    }
+
+    private Map<Denomination, BanknoteTray> prepareTrays() {
+        Map<Denomination, BanknoteTray> preparedTrays = new EnumMap<>(Denomination.class);
+
+        Set<Banknote> preloadBanknotesTen = preloadBanknotes(Denomination.TEN, 100);
+        BanknoteTray banknoteTrayTen = new BanknoteTrayTen(preloadBanknotesTen);
+        preparedTrays.put(Denomination.TEN, banknoteTrayTen);
+
+        Set<Banknote> preloadBanknotesFifty = preloadBanknotes(Denomination.FIFTY, 100);
+        BanknoteTray banknoteTrayFifty = new BanknoteTrayFifty(preloadBanknotesFifty);
+        preparedTrays.put(Denomination.FIFTY, banknoteTrayFifty);
+
+        Set<Banknote> preloadBanknotesOneHundred = preloadBanknotes(Denomination.ONE_HUNDRED, 100);
+        BanknoteTray banknoteTrayOneHundred = new BanknoteTrayOneHundred(preloadBanknotesOneHundred);
+        preparedTrays.put(Denomination.ONE_HUNDRED, banknoteTrayOneHundred);
+
+        Set<Banknote> preloadBanknotesTwoHundred = preloadBanknotes(Denomination.TWO_HUNDRED, 100);
+        BanknoteTray banknoteTrayTwoHundred = new BanknoteTrayTwoHundred(preloadBanknotesTwoHundred);
+        preparedTrays.put(Denomination.TWO_HUNDRED, banknoteTrayTwoHundred);
+
+        Set<Banknote> preloadBanknotesFiveHundred = preloadBanknotes(Denomination.FIVE_HUNDRED, 100);
+        BanknoteTray banknoteTrayFiveHundred = new BanknoteTrayFiveHundred(preloadBanknotesFiveHundred);
+        preparedTrays.put(Denomination.FIVE_HUNDRED, banknoteTrayFiveHundred);
+
+        Set<Banknote> preloadBanknotesOneThousand = preloadBanknotes(Denomination.ONE_THOUSAND, 100);
+        BanknoteTray BanknoteTrayOneThousand = new BanknoteTrayOneThousand(preloadBanknotesOneThousand);
+        preparedTrays.put(Denomination.ONE_THOUSAND, BanknoteTrayOneThousand);
+
+        Set<Banknote> preloadBanknotesTwoThousand = preloadBanknotes(Denomination.TWO_THOUSAND, 100);
+        BanknoteTray BanknoteTrayTwoThousand = new BanknoteTrayTwoThousand(preloadBanknotesTwoThousand);
+        preparedTrays.put(Denomination.TWO_THOUSAND, BanknoteTrayTwoThousand);
+
+        Set<Banknote> preloadBanknotesFiveThousand = preloadBanknotes(Denomination.FIVE_THOUSAND, 100);
+        BanknoteTray BanknoteTrayFiveThousand = new BanknoteTrayFiveThousand(preloadBanknotesFiveThousand);
+        preparedTrays.put(Denomination.FIVE_THOUSAND, BanknoteTrayFiveThousand);
+
+        return preparedTrays;
     }
 }

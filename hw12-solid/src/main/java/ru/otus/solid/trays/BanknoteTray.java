@@ -58,21 +58,20 @@ public abstract class BanknoteTray {
     }
 
     public Set<Banknote> getBanknotes(int amount) {
-        Set<Banknote> getBanknotes = new HashSet<>();
+        Set<Banknote> resultBanknotes = new HashSet<>();
 
         if (amount <= 0 || amount > getAmount()) {
-            return getBanknotes; // кидать исключение: запрошенное число купюр должно быть положительным и не больше
+            return resultBanknotes; // кидать исключение: запрошенное число купюр должно быть положительным и не больше
             // кол-ва в лотке
         }
-
         if (amount == getAmount()) {
-            getBanknotes.addAll(banknotes);
-            banknotes.clear(); // заменить на метод очистки с проверками
+            resultBanknotes.addAll(this.banknotes);
+            this.banknotes.clear(); // заменить на метод очистки с проверками
         } else if (amount < getAmount()) {
             Set<Banknote> banknotesToMove = (banknotes.stream().limit(amount).collect(Collectors.toSet()));
-            getBanknotes.addAll(banknotesToMove);
-            banknotes.removeAll(banknotesToMove);
+            resultBanknotes.addAll(banknotesToMove);
+            this.banknotes.removeAll(banknotesToMove);
         }
-        return getBanknotes;
+        return resultBanknotes;
     }
 }
