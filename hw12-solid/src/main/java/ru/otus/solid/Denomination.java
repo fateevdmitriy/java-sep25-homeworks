@@ -3,7 +3,6 @@ package ru.otus.solid;
 import java.util.Arrays;
 
 public enum Denomination {
-    FIVE(5),
     TEN(10),
     FIFTY(50),
     ONE_HUNDRED(100),
