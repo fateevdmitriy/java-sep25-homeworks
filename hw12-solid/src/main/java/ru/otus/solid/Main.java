@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         Atm atm1 = new Atm();
         System.out.println("ATM balance: " + atm1.getBalance());
-        System.out.println("ATM each tray's balance: " + atm1.getEachTrayBalance());
+        System.out.println("ATM each tray's amount: " + atm1.getEachTrayAmount());
 
         Banknote oneHundreed1 = new BanknoteImpl(Denomination.ONE_HUNDRED);
         BanknoteImpl twoHundreed1 = new BanknoteImpl(Denomination.TWO_HUNDRED);
@@ -22,9 +22,9 @@ public class Main {
 
         atm1.putMoney(twoThousand1);
         System.out.println("ATM balance: " + atm1.getBalance());
-        System.out.println("ATM each tray's balance: " + atm1.getEachTrayBalance());
+        System.out.println("ATM each tray's balance: " + atm1.getEachTrayAmount());
 
         atm1.getMoney(300);
-        System.out.println("ATM each tray's balance: " + atm1.getEachTrayBalance());
+        System.out.println("ATM each tray's balance: " + atm1.getEachTrayAmount());
     }
 }

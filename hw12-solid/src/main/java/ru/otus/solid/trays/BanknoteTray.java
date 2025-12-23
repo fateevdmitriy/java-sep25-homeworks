@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import ru.otus.solid.Denomination;
 import ru.otus.solid.banknotes.Banknote;
+import ru.otus.solid.exceptions.AddBanknoteToTrayException;
+import ru.otus.solid.exceptions.GetBanknotesFromTrayException;
 
 public abstract class BanknoteTray {
 
@@ -35,21 +37,22 @@ public abstract class BanknoteTray {
         return getAmount() * denomination.getValue();
     }
 
-    public boolean putBanknote(Banknote banknote) {
+    public boolean putBanknote(Banknote banknote) throws AddBanknoteToTrayException {
         if (this.getDenomination() != banknote.getDenomination()) {
-            return false; // кидать исключение: добавить купюру в лоток невозможно, номинал банкноты не соответствует
-            // лотку.
+            throw new AddBanknoteToTrayException("Недопустимый номинал банкноты: "
+                    + banknote.getDenomination().getValue());
         }
         if (this.getAmount() >= this.getCapacity()) {
-            return false; // кидать исключение: добавить купюру в лоток невозможно, лоток заполнен.
+            throw new AddBanknoteToTrayException("Невозможно добавить купюру в лоток. Заполнен лоток с номиналом: "
+                    + this.getDenomination().getValue());
         }
         if (this.getAmount() == 0) {
             this.banknotes = new HashSet<>();
         }
-        return banknotes.add(banknote); // добавить обработку исключений
+        return banknotes.add(banknote);
     }
 
-    public boolean putBanknotes(Set<Banknote> banknotes) {
+    public boolean putBanknotes(Set<Banknote> banknotes) throws AddBanknoteToTrayException {
         boolean resultFlag = true;
         for (Banknote banknote : banknotes) {
             resultFlag = resultFlag && putBanknote(banknote);
@@ -57,12 +60,16 @@ public abstract class BanknoteTray {
         return resultFlag;
     }
 
-    public Set<Banknote> getBanknotes(int amount) {
+    public Set<Banknote> getBanknotes(int amount) throws GetBanknotesFromTrayException {
         Set<Banknote> resultBanknotes = new HashSet<>();
-
-        if (amount <= 0 || amount > getAmount()) {
-            return resultBanknotes; // кидать исключение: запрошенное число купюр должно быть положительным и не больше
-            // кол-ва в лотке
+        if (amount <= 0) {
+            throw new GetBanknotesFromTrayException(
+                    "Запрошенное количество банкнот должно быть указано положительным числом.");
+        }
+        if (amount > getAmount()) {
+            throw new GetBanknotesFromTrayException(
+                    "Запрошенное количество банкнот превышает имеющееся количество банкнот номиналом: "
+                            + this.getDenomination().getValue());
         }
         if (amount == getAmount()) {
             resultBanknotes.addAll(this.banknotes);
