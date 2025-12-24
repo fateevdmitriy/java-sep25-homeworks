@@ -1,9 +1,10 @@
 rootProject.name = "otusJavaProf"
-include("hw01-gradle")
-include("hw04-generics")
-include("hw06-annotations")
-include("hw08-gc")
-include("hw10-aot")
+    include("hw01-gradle")
+    include("hw04-generics")
+    include("hw06-annotations")
+    include("hw08-gc")
+    include("hw10-aot")
+include("hw12-solid")
 
 pluginManagement {
     val jgitver: String by settings
@@ -26,7 +27,3 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-
-include("hw08-gc")
-include("hw10-aot")
-include("hw12-solid")

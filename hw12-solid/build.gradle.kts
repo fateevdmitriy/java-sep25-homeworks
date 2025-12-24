@@ -1,19 +1,7 @@
-plugins {
-    id("java")
-}
-
-group = "ru.otus.java.prof"
-version = ""
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-}
+    implementation ("ch.qos.logback:logback-classic")
 
-tasks.test {
-    useJUnitPlatform()
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation ("org.assertj:assertj-core")
 }

@@ -12,9 +12,9 @@ public class Main {
         System.out.println("ATM each tray's amount: " + atm1.getEachTrayAmount());
 
         Banknote oneHundreed1 = new BanknoteImpl(Denomination.ONE_HUNDRED);
-        BanknoteImpl twoHundreed1 = new BanknoteImpl(Denomination.TWO_HUNDRED);
-        BanknoteImpl fifty1 = new BanknoteImpl(Denomination.FIFTY);
-        BanknoteImpl twoThousand1 = new BanknoteImpl(Denomination.TWO_THOUSAND);
+        Banknote twoHundreed1 = new BanknoteImpl(Denomination.TWO_HUNDRED);
+        Banknote fifty1 = new BanknoteImpl(Denomination.FIFTY);
+        Banknote twoThousand1 = new BanknoteImpl(Denomination.TWO_THOUSAND);
         Set<Banknote> testBanknotes1 = new HashSet<>(Arrays.asList(oneHundreed1, twoHundreed1, fifty1));
 
         atm1.putMoney(testBanknotes1);
@@ -24,7 +24,7 @@ public class Main {
         System.out.println("ATM balance: " + atm1.getBalance());
         System.out.println("ATM each tray's balance: " + atm1.getEachTrayAmount());
 
-        atm1.getMoney(300);
+        atm1.getMoney(1000000);
         System.out.println("ATM each tray's balance: " + atm1.getEachTrayAmount());
     }
 }

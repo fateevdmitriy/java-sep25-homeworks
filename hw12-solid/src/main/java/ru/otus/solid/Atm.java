@@ -8,6 +8,7 @@ import ru.otus.solid.exceptions.GetBanknotesFromTrayException;
 import ru.otus.solid.trays.*;
 
 public class Atm {
+    private static final int PRELOAD_BANKNOTES_AMOUNT = 100;
     private final Map<Denomination, BanknoteTray> trays;
     private List<String> errorMessages = new ArrayList<>(); // вынести в свойства класса
 
@@ -15,10 +16,14 @@ public class Atm {
         this.trays = prepareTrays();
     }
 
+    public BanknoteTray getBanknoteTray(Denomination denomination) {
+        return trays.get(denomination);
+    }
+
     public int getBalance() {
         int allTraysBalance = 0;
         for (Denomination denomination : trays.keySet()) {
-            int trayBalance = trays.get(denomination).getBalance();
+            int trayBalance = getBanknoteTray(denomination).getBalance();
             if (trayBalance >= 0) {
                 allTraysBalance = allTraysBalance + trayBalance;
             }
@@ -97,13 +102,15 @@ public class Atm {
         if (remainSum != 0) {
             errorMessages.add(String.format("Запрошенная сумма не может быть выдана: %s", requestedSum));
         }
+        checkErrors();
         return resultBanknotes;
     }
 
     public void checkErrors() {
         if (!errorMessages.isEmpty()) {
             System.out.printf(
-                    "В работе банкомата возникли следующие ошибки: %s", String.join(System.lineSeparator(), errorMessages));
+                    "В работе банкомата возникли следующие ошибки: %s",
+                    String.join(System.lineSeparator(), errorMessages));
             errorMessages.clear();
         }
     }
@@ -119,35 +126,39 @@ public class Atm {
     private Map<Denomination, BanknoteTray> prepareTrays() {
         Map<Denomination, BanknoteTray> preparedTrays = new EnumMap<>(Denomination.class);
 
-        Set<Banknote> preloadBanknotesTen = preloadBanknotes(Denomination.TEN, 100);
+        Set<Banknote> preloadBanknotesTen = preloadBanknotes(Denomination.TEN, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray banknoteTrayTen = new BanknoteTrayTen(preloadBanknotesTen);
         preparedTrays.put(Denomination.TEN, banknoteTrayTen);
 
-        Set<Banknote> preloadBanknotesFifty = preloadBanknotes(Denomination.FIFTY, 100);
+        Set<Banknote> preloadBanknotesFifty = preloadBanknotes(Denomination.FIFTY, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray banknoteTrayFifty = new BanknoteTrayFifty(preloadBanknotesFifty);
         preparedTrays.put(Denomination.FIFTY, banknoteTrayFifty);
 
-        Set<Banknote> preloadBanknotesOneHundred = preloadBanknotes(Denomination.ONE_HUNDRED, 100);
+        Set<Banknote> preloadBanknotesOneHundred = preloadBanknotes(Denomination.ONE_HUNDRED, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray banknoteTrayOneHundred = new BanknoteTrayOneHundred(preloadBanknotesOneHundred);
         preparedTrays.put(Denomination.ONE_HUNDRED, banknoteTrayOneHundred);
 
-        Set<Banknote> preloadBanknotesTwoHundred = preloadBanknotes(Denomination.TWO_HUNDRED, 100);
+        Set<Banknote> preloadBanknotesTwoHundred = preloadBanknotes(Denomination.TWO_HUNDRED, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray banknoteTrayTwoHundred = new BanknoteTrayTwoHundred(preloadBanknotesTwoHundred);
         preparedTrays.put(Denomination.TWO_HUNDRED, banknoteTrayTwoHundred);
 
-        Set<Banknote> preloadBanknotesFiveHundred = preloadBanknotes(Denomination.FIVE_HUNDRED, 100);
+        Set<Banknote> preloadBanknotesFiveHundred =
+                preloadBanknotes(Denomination.FIVE_HUNDRED, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray banknoteTrayFiveHundred = new BanknoteTrayFiveHundred(preloadBanknotesFiveHundred);
         preparedTrays.put(Denomination.FIVE_HUNDRED, banknoteTrayFiveHundred);
 
-        Set<Banknote> preloadBanknotesOneThousand = preloadBanknotes(Denomination.ONE_THOUSAND, 100);
+        Set<Banknote> preloadBanknotesOneThousand =
+                preloadBanknotes(Denomination.ONE_THOUSAND, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray BanknoteTrayOneThousand = new BanknoteTrayOneThousand(preloadBanknotesOneThousand);
         preparedTrays.put(Denomination.ONE_THOUSAND, BanknoteTrayOneThousand);
 
-        Set<Banknote> preloadBanknotesTwoThousand = preloadBanknotes(Denomination.TWO_THOUSAND, 100);
+        Set<Banknote> preloadBanknotesTwoThousand =
+                preloadBanknotes(Denomination.TWO_THOUSAND, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray BanknoteTrayTwoThousand = new BanknoteTrayTwoThousand(preloadBanknotesTwoThousand);
         preparedTrays.put(Denomination.TWO_THOUSAND, BanknoteTrayTwoThousand);
 
-        Set<Banknote> preloadBanknotesFiveThousand = preloadBanknotes(Denomination.FIVE_THOUSAND, 100);
+        Set<Banknote> preloadBanknotesFiveThousand =
+                preloadBanknotes(Denomination.FIVE_THOUSAND, PRELOAD_BANKNOTES_AMOUNT);
         BanknoteTray BanknoteTrayFiveThousand = new BanknoteTrayFiveThousand(preloadBanknotesFiveThousand);
         preparedTrays.put(Denomination.FIVE_THOUSAND, BanknoteTrayFiveThousand);
 
