@@ -3,38 +3,38 @@ package ru.otus.solid;
 import java.util.*;
 import ru.otus.solid.banknotes.Banknote;
 import ru.otus.solid.banknotes.BanknoteImpl;
-import ru.otus.solid.exceptions.AddBanknoteToTrayException;
 import ru.otus.solid.exceptions.GetBanknotesFromTrayException;
+import ru.otus.solid.exceptions.PutBanknoteToTrayException;
 import ru.otus.solid.trays.*;
 
 public class Atm {
     private static final int PRELOAD_BANKNOTES_AMOUNT = 100;
     private final Map<Denomination, BanknoteTray> trays;
-    private List<String> errorMessages = new ArrayList<>(); // вынести в свойства класса
 
     public Atm() {
         this.trays = prepareTrays();
     }
 
-    public BanknoteTray getBanknoteTray(Denomination denomination) {
+    public BanknoteTray getTray(Denomination denomination) {
         return trays.get(denomination);
     }
 
-    public int getBalance() {
+    public int getTrayBalance(Denomination denomination) {
+        return getTray(denomination).getBalance();
+    }
+
+    public int getAllTraysBalance() {
         int allTraysBalance = 0;
         for (Denomination denomination : trays.keySet()) {
-            int trayBalance = getBanknoteTray(denomination).getBalance();
-            if (trayBalance >= 0) {
-                allTraysBalance = allTraysBalance + trayBalance;
-            }
+            allTraysBalance += getTrayBalance(denomination);
         }
         return allTraysBalance;
     }
 
     public Map<Denomination, Integer> getEachTrayBalance() {
         Map<Denomination, Integer> denominationToBalance = new EnumMap<>(Denomination.class);
-        for (BanknoteTray banknoteTray : trays.values()) {
-            denominationToBalance.put(banknoteTray.getDenomination(), banknoteTray.getBalance());
+        for (Denomination denomination : trays.keySet()) {
+            denominationToBalance.put(denomination, getTray(denomination).getBalance());
         }
         return denominationToBalance;
     }
@@ -47,72 +47,49 @@ public class Atm {
         return denominationToAmount;
     }
 
-    public void putMoney(Banknote banknote) {
+    public void putMoney(Banknote banknote) throws PutBanknoteToTrayException {
         Set<Banknote> money = Collections.singleton(banknote);
         putMoney(money);
     }
 
-    public void putMoney(Set<Banknote> money) {
+    public void putMoney(Set<Banknote> money) throws PutBanknoteToTrayException {
         BanknoteTray targetTray;
         for (Banknote banknote : money) {
             Denomination banknoteDenomination = banknote.getDenomination();
             if (trays.containsKey(banknoteDenomination)) {
                 targetTray = trays.get(banknoteDenomination);
-                try {
-                    targetTray.putBanknote(banknote);
-                } catch (AddBanknoteToTrayException e) {
-                    errorMessages.add(e.getMessage());
-                }
+                targetTray.putBanknote(banknote);
             } else {
-                errorMessages.add(String.format(
-                        "Банкнота номинала %s не может быть принята, недопустимый номинал.",
-                        banknote.getDenomination().getValue()));
+                throw new PutBanknoteToTrayException("Банкнота номинала %s не может быть принята, недопустимый номинал."
+                        + banknote.getDenomination().getValue());
             }
         }
-        checkErrors();
     }
 
-    public Set<Banknote> getMoney(int requestedSum) {
+    public Set<Banknote> getMoney(int requestedSum) throws GetBanknotesFromTrayException {
         Set<Banknote> resultBanknotes = new HashSet<>();
         int remainSum = requestedSum;
         List<Denomination> reversedDenominations =
                 Arrays.asList(Denomination.values()).reversed();
-
         for (Denomination denomination : reversedDenominations) {
             int denominationValue = denomination.getValue();
             int divisionInt = remainSum / denominationValue;
             int divisionReminder = remainSum % denominationValue;
-
             if (divisionInt >= 1) {
                 BanknoteTray targetTray = trays.get(denomination);
-
                 Set<Banknote> getBanknotes = null;
-                try {
-                    getBanknotes = targetTray.getBanknotes(divisionInt);
-                    resultBanknotes.addAll(getBanknotes);
-                    remainSum = remainSum - divisionInt * denominationValue;
-                } catch (GetBanknotesFromTrayException e) {
-                    errorMessages.add(e.getMessage());
-                }
+                getBanknotes = targetTray.getBanknotes(divisionInt);
+                resultBanknotes.addAll(getBanknotes);
+                remainSum = remainSum - divisionInt * denominationValue;
             }
             if (divisionReminder == 0) {
                 break;
             }
         }
         if (remainSum != 0) {
-            errorMessages.add(String.format("Запрошенная сумма не может быть выдана: %s", requestedSum));
+            throw new GetBanknotesFromTrayException("Запрошенная сумма не может быть выдана: " + requestedSum);
         }
-        checkErrors();
         return resultBanknotes;
-    }
-
-    public void checkErrors() {
-        if (!errorMessages.isEmpty()) {
-            System.out.printf(
-                    "В работе банкомата возникли следующие ошибки: %s",
-                    String.join(System.lineSeparator(), errorMessages));
-            errorMessages.clear();
-        }
     }
 
     private Set<Banknote> preloadBanknotes(Denomination denomination, int preloadAmount) {

@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import ru.otus.solid.Denomination;
 import ru.otus.solid.banknotes.Banknote;
-import ru.otus.solid.exceptions.AddBanknoteToTrayException;
 import ru.otus.solid.exceptions.GetBanknotesFromTrayException;
+import ru.otus.solid.exceptions.PutBanknoteToTrayException;
 
 public abstract class BanknoteTray {
 
@@ -37,13 +37,13 @@ public abstract class BanknoteTray {
         return getAmount() * denomination.getValue();
     }
 
-    public boolean putBanknote(Banknote banknote) throws AddBanknoteToTrayException {
+    public boolean putBanknote(Banknote banknote) throws PutBanknoteToTrayException {
         if (this.getDenomination() != banknote.getDenomination()) {
-            throw new AddBanknoteToTrayException("Недопустимый номинал банкноты: "
+            throw new PutBanknoteToTrayException("Недопустимый номинал банкноты: "
                     + banknote.getDenomination().getValue());
         }
         if (this.getAmount() >= this.getCapacity()) {
-            throw new AddBanknoteToTrayException("Невозможно добавить купюру в лоток. Заполнен лоток с номиналом: "
+            throw new PutBanknoteToTrayException("Невозможно добавить купюру в лоток. Заполнен лоток с номиналом: "
                     + this.getDenomination().getValue());
         }
         if (this.getAmount() == 0) {
@@ -52,7 +52,7 @@ public abstract class BanknoteTray {
         return banknotes.add(banknote);
     }
 
-    public boolean putBanknotes(Set<Banknote> banknotes) throws AddBanknoteToTrayException {
+    public boolean putBanknotes(Set<Banknote> banknotes) throws PutBanknoteToTrayException {
         boolean resultFlag = true;
         for (Banknote banknote : banknotes) {
             resultFlag = resultFlag && putBanknote(banknote);

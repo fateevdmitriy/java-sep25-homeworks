@@ -1,7 +1,7 @@
 package ru.otus.solid.exceptions;
 
-public class AddBanknoteToTrayException extends Exception {
-    public AddBanknoteToTrayException(String message) {
+public class PutBanknoteToTrayException extends Exception {
+    public PutBanknoteToTrayException(String message) {
         super("Возникло исключение при попытке добавить банкноту в лоток банкомата." + message);
     }
 }

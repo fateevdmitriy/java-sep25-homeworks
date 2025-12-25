@@ -1,5 +1,7 @@
 package ru.otus.solid;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.Arrays;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.solid.banknotes.Banknote;
 import ru.otus.solid.banknotes.BanknoteImpl;
+import ru.otus.solid.exceptions.GetBanknotesFromTrayException;
 
 class AtmTests {
 
@@ -20,7 +23,7 @@ class AtmTests {
         // when
         Atm atm1 = new Atm();
         // then
-        assertThat(atm1.getBalance()).isEqualTo(expectedBalanceAtm1);
+        assertThat(atm1.getAllTraysBalance()).isEqualTo(expectedBalanceAtm1);
     }
 
     @Test
@@ -29,14 +32,16 @@ class AtmTests {
         // given
         int expectedBalanceAtm2 = 887000;
         int expectedBanknotesAmountAtm2 = 101;
-        Banknote oneThousand1 = new BanknoteImpl(Denomination.ONE_THOUSAND);
+        Banknote banknote1 = new BanknoteImpl(Denomination.ONE_THOUSAND);
         // when
-        Atm atm2 = new Atm();
-        atm2.putMoney(oneThousand1);
+        Atm atm = new Atm();
         // then
-        assertThat(atm2.getBalance()).isEqualTo(expectedBalanceAtm2);
-        assertThat(atm2.getBanknoteTray(oneThousand1.getDenomination()).getAmount())
-                .isEqualTo(expectedBanknotesAmountAtm2);
+        assertThatCode(() -> {
+                    atm.putMoney(banknote1);
+                })
+                .doesNotThrowAnyException();
+        assertThat(atm.getAllTraysBalance()).isEqualTo(expectedBalanceAtm2);
+        assertThat(atm.getTray(banknote1.getDenomination()).getAmount()).isEqualTo(expectedBanknotesAmountAtm2);
     }
 
     @Test
@@ -52,10 +57,13 @@ class AtmTests {
         Set<Banknote> banknotes1 =
                 new HashSet<>(Arrays.asList(fifty1, oneHundreed1, twoHundreed1, fiveHundreed1, twoThousand1));
         // when
-        Atm atm3 = new Atm();
-        atm3.putMoney(banknotes1);
+        Atm atm = new Atm();
         // then
-        assertThat(atm3.getBalance()).isEqualTo(expectedBalanceAtm3);
+        assertThatCode(() -> {
+                    atm.putMoney(banknotes1);
+                })
+                .doesNotThrowAnyException();
+        assertThat(atm.getAllTraysBalance()).isEqualTo(expectedBalanceAtm3);
     }
 
     @Test
@@ -65,10 +73,13 @@ class AtmTests {
         int requestedSum = 2650;
         int expectedBalanceAtm = 883350;
         // when
-        Atm atm4 = new Atm();
-        atm4.getMoney(requestedSum);
+        Atm atm = new Atm();
         // then
-        assertThat(atm4.getBalance()).isEqualTo(expectedBalanceAtm);
+        assertThatCode(() -> {
+                    atm.getMoney(requestedSum);
+                })
+                .doesNotThrowAnyException();
+        assertThat(atm.getAllTraysBalance()).isEqualTo(expectedBalanceAtm);
     }
 
     @Test
@@ -79,8 +90,10 @@ class AtmTests {
         int expectedBalanceAtm = 886000;
         // when
         Atm atm5 = new Atm();
-        atm5.getMoney(requestedSum);
         // then
-        assertThat(atm5.getBalance()).isEqualTo(expectedBalanceAtm);
+        assertThatThrownBy(() -> {
+                    atm5.getMoney(requestedSum);
+                })
+                .isInstanceOf(GetBanknotesFromTrayException.class);
     }
 }
