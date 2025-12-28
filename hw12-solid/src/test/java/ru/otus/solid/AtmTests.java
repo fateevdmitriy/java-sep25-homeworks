@@ -1,8 +1,8 @@
 package ru.otus.solid;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,44 +11,44 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.solid.banknotes.Banknote;
 import ru.otus.solid.banknotes.BanknoteImpl;
-import ru.otus.solid.exceptions.GetBanknotesFromTrayException;
+import ru.otus.solid.exceptions.*;
 
 class AtmTests {
 
     @Test
-    @DisplayName("Первичная загрузка банкнот в банкомат и получение баланса")
+    @DisplayName("Первичная загрузка банкнот в банкомат и проверка баланса")
     void prepareAtm() {
         // given
-        int expectedBalanceAtm1 = 886000;
+        int expectedBalanceAtm = 886000;
         // when
-        Atm atm1 = new Atm();
+        Atm atm = new AtmImpl();
         // then
-        assertThat(atm1.getAllTraysBalance()).isEqualTo(expectedBalanceAtm1);
+        assertThat(atm.getGeneralBalance()).isEqualTo(expectedBalanceAtm);
     }
 
     @Test
-    @DisplayName("Загрузка одной купюры в банкнот")
+    @DisplayName("Загрузка одной купюры в банкомат")
     void loadOneBanknoteToAtm() {
         // given
-        int expectedBalanceAtm2 = 887000;
-        int expectedBanknotesAmountAtm2 = 101;
+        int expectedBalanceAtm = 887000;
+        int expectedBanknotesAmountAtm = 101;
         Banknote banknote1 = new BanknoteImpl(Denomination.ONE_THOUSAND);
         // when
-        Atm atm = new Atm();
+        Atm atm = new AtmImpl();
         // then
         assertThatCode(() -> {
                     atm.putMoney(banknote1);
                 })
                 .doesNotThrowAnyException();
-        assertThat(atm.getAllTraysBalance()).isEqualTo(expectedBalanceAtm2);
-        //assertThat(atm.getTray(banknote1.getDenomination()).getAmount()).isEqualTo(expectedBanknotesAmountAtm2);
+        assertThat(atm.getGeneralBalance()).isEqualTo(expectedBalanceAtm);
+        assertThat(atm.getAmount(banknote1.getDenomination())).isEqualTo(expectedBanknotesAmountAtm);
     }
 
     @Test
     @DisplayName("Загрузка нескольких разных купюр в банкнот")
     void loadDifferentBanknotesToAtm() {
         // given
-        int expectedBalanceAtm3 = 888850;
+        int expectedBalanceAtm = 888850;
         Banknote fifty1 = new BanknoteImpl(Denomination.FIFTY);
         Banknote oneHundreed1 = new BanknoteImpl(Denomination.ONE_HUNDRED);
         Banknote twoHundreed1 = new BanknoteImpl(Denomination.TWO_HUNDRED);
@@ -57,13 +57,13 @@ class AtmTests {
         Set<Banknote> banknotes1 =
                 new HashSet<>(Arrays.asList(fifty1, oneHundreed1, twoHundreed1, fiveHundreed1, twoThousand1));
         // when
-        Atm atm = new Atm();
+        Atm atm = new AtmImpl();
         // then
         assertThatCode(() -> {
                     atm.putMoney(banknotes1);
                 })
                 .doesNotThrowAnyException();
-        assertThat(atm.getAllTraysBalance()).isEqualTo(expectedBalanceAtm3);
+        assertThat(atm.getGeneralBalance()).isEqualTo(expectedBalanceAtm);
     }
 
     @Test
@@ -73,13 +73,13 @@ class AtmTests {
         int requestedSum = 2650;
         int expectedBalanceAtm = 883350;
         // when
-        Atm atm = new Atm();
+        Atm atm = new AtmImpl();
         // then
         assertThatCode(() -> {
                     atm.getMoney(requestedSum);
                 })
                 .doesNotThrowAnyException();
-        assertThat(atm.getAllTraysBalance()).isEqualTo(expectedBalanceAtm);
+        assertThat(atm.getGeneralBalance()).isEqualTo(expectedBalanceAtm);
     }
 
     @Test
@@ -89,11 +89,12 @@ class AtmTests {
         int requestedSum = 1000000;
         int expectedBalanceAtm = 886000;
         // when
-        Atm atm5 = new Atm();
+        Atm atm = new AtmImpl();
         // then
         assertThatThrownBy(() -> {
-                    atm5.getMoney(requestedSum);
+                    atm.getMoney(requestedSum);
                 })
                 .isInstanceOf(GetBanknotesFromTrayException.class);
+        assertThat(atm.getGeneralBalance()).isEqualTo(expectedBalanceAtm);
     }
 }

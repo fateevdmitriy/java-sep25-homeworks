@@ -2,7 +2,7 @@ package ru.otus.solid;
 
 import java.util.Arrays;
 
-public enum Denomination  {
+public enum Denomination {
     TEN(10, 50000),
     FIFTY(50, 40000),
     ONE_HUNDRED(100, 30000),
@@ -28,7 +28,7 @@ public enum Denomination  {
         return value;
     }
 
-    public Denomination findByValue(int value) {
+    public static Denomination findByValue(int value) {
         return Arrays.stream(values())
                 .filter(denomination -> denomination.value == value)
                 .findFirst()

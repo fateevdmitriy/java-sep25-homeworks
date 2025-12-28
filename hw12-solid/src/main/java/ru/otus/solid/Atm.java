@@ -7,6 +7,8 @@ import ru.otus.solid.exceptions.PutBanknoteToTrayException;
 
 public interface Atm {
 
+    int getAmount(Denomination denomination);
+
     int getBalance(Denomination denomination);
 
     int getGeneralBalance();
