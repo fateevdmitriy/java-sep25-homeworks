@@ -45,13 +45,16 @@ public class BanknotesHolderImpl implements BanknotesHolder {
         List<String> exceptionMessages = new ArrayList<>();
         String delimiter = System.lineSeparator();
         boolean resultFlag = true;
+
         for (Banknote banknote : banknotes) {
             try {
                 resultFlag = resultFlag && putBanknote(banknote);
             } catch (PutBanknoteToTrayException e) {
+                resultFlag = false;
                 exceptionMessages.add(e.getMessage());
             }
         }
+
         if (!exceptionMessages.isEmpty()) {
             throw new PutBanknoteToTrayException(String.join(delimiter, exceptionMessages));
         }

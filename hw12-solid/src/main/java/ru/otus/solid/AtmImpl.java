@@ -20,7 +20,7 @@ public class AtmImpl implements Atm {
         try {
             banknotesHolder.putBanknotes(prepareBanknotes());
         } catch (PutBanknoteToTrayException e) {
-            log.error(e.getMessage());
+            log.error("Ошибки при первичной загрузке банкнот в банкомат: " + e.getMessage());
         }
     }
 

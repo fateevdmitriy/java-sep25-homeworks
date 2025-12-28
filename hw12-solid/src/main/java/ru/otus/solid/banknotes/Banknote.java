@@ -5,5 +5,4 @@ import ru.otus.solid.Denomination;
 public interface Banknote {
 
     public Denomination getDenomination();
-
 }
