@@ -10,7 +10,6 @@ import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.solid.banknotes.Banknote;
-import ru.otus.solid.banknotes.BanknoteImpl;
 import ru.otus.solid.exceptions.*;
 
 class AtmTests {
@@ -32,7 +31,7 @@ class AtmTests {
         // given
         int expectedBalanceAtm = 887000;
         int expectedBanknotesAmountAtm = 101;
-        Banknote banknote1 = new BanknoteImpl(Denomination.ONE_THOUSAND);
+        Banknote banknote1 = new Banknote(Denomination.ONE_THOUSAND);
         // when
         Atm atm = new AtmImpl();
         // then
@@ -49,11 +48,11 @@ class AtmTests {
     void loadDifferentBanknotesToAtm() {
         // given
         int expectedBalanceAtm = 888850;
-        Banknote fifty1 = new BanknoteImpl(Denomination.FIFTY);
-        Banknote oneHundreed1 = new BanknoteImpl(Denomination.ONE_HUNDRED);
-        Banknote twoHundreed1 = new BanknoteImpl(Denomination.TWO_HUNDRED);
-        Banknote fiveHundreed1 = new BanknoteImpl(Denomination.FIVE_HUNDRED);
-        Banknote twoThousand1 = new BanknoteImpl(Denomination.TWO_THOUSAND);
+        Banknote fifty1 = new Banknote(Denomination.FIFTY);
+        Banknote oneHundreed1 = new Banknote(Denomination.ONE_HUNDRED);
+        Banknote twoHundreed1 = new Banknote(Denomination.TWO_HUNDRED);
+        Banknote fiveHundreed1 = new Banknote(Denomination.FIVE_HUNDRED);
+        Banknote twoThousand1 = new Banknote(Denomination.TWO_THOUSAND);
         Set<Banknote> banknotes1 =
                 new HashSet<>(Arrays.asList(fifty1, oneHundreed1, twoHundreed1, fiveHundreed1, twoThousand1));
         // when

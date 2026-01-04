@@ -4,7 +4,6 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.solid.banknotes.Banknote;
-import ru.otus.solid.banknotes.BanknoteImpl;
 import ru.otus.solid.exceptions.GetBanknotesFromTrayException;
 import ru.otus.solid.exceptions.PutBanknoteToTrayException;
 import ru.otus.solid.trays.*;
@@ -28,7 +27,7 @@ public class AtmImpl implements Atm {
         Set<Banknote> resultBanknotes = new HashSet<>();
         for (Denomination denomination : Denomination.values()) {
             for (int i = 0; i < PRELOAD_BANKNOTES_AMOUNT; i++) {
-                resultBanknotes.add(new BanknoteImpl(denomination));
+                resultBanknotes.add(new Banknote(denomination));
             }
         }
         return resultBanknotes;
