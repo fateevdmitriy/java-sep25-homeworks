@@ -4,7 +4,8 @@ rootProject.name = "otusJavaProf"
     include("hw06-annotations")
     include("hw08-gc")
     include("hw10-aot")
-include("hw12-solid")
+    include("hw12-solid")
+    include("hw15-patterns")
 
 pluginManagement {
     val jgitver: String by settings
