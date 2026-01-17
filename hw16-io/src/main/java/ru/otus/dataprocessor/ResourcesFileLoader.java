@@ -1,6 +1,5 @@
 package ru.otus.dataprocessor;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.model.Measurement;
 
-@JsonPropertyOrder({"version", "startLat", "startLng", "endLat", "endLng"})
 public class ResourcesFileLoader implements Loader {
     // читает файл, парсит и возвращает результат
     private static final Logger logger = LoggerFactory.getLogger(ResourcesFileLoader.class);
