@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +26,7 @@ public class ResourcesFileLoader implements Loader {
         try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(fileName)) {
             return mapper.readValue(inputStream, new TypeReference<List<Measurement>>() {});
         } catch (IOException e) {
-            logger.error("An exception occurred: {}", e.getMessage());
-            return new ArrayList<>();
+            throw new FileProcessException(e.getMessage());
         }
     }
 }

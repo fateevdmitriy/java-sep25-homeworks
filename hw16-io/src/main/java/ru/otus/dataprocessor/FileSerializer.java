@@ -27,7 +27,7 @@ public class FileSerializer implements Serializer {
         try {
             mapper.writeValue(file, data);
         } catch (IOException e) {
-            logger.error("An exception occurred: {}", e.getMessage());
+            throw new FileProcessException(e.getMessage());
         }
     }
 }
