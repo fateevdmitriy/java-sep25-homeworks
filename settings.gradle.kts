@@ -6,6 +6,7 @@ rootProject.name = "otusJavaProf"
     include("hw10-aot")
     include("hw12-solid")
     include("hw15-patterns")
+    include("hw16-io")
 
 pluginManagement {
     val jgitver: String by settings
