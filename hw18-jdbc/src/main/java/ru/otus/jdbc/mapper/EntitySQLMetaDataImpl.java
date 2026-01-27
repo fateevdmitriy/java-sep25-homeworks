@@ -29,20 +29,14 @@ public class EntitySQLMetaDataImpl<T> implements EntitySQLMetaData {
 
     @Override
     public String getInsertSql() {
-        //INSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...);
         String queryTemplate = "insert into %s (%s) values (%s)";
-        String columns = nonIdFieldNames.stream()
-                            .map(Field::getName)
-                            .collect(Collectors.joining(","));
-        String values = nonIdFieldNames.stream()
-                            .map(field -> "?")
-                            .collect(Collectors.joining(","));
+        String columns = nonIdFieldNames.stream().map(Field::getName).collect(Collectors.joining(","));
+        String values = nonIdFieldNames.stream().map(field -> "?").collect(Collectors.joining(","));
         return String.format(queryTemplate, entityClassName, columns, values);
     }
 
     @Override
     public String getUpdateSql() {
-        // UPDATE table_name SET column1 = value1, column2 = value2 WHERE condition;
         String queryTemplate = "update %s set %s where %s = ?";
         String columnsValues = nonIdFieldNames.stream()
                 .map(field -> String.format("%s = ?", field.getName()))
