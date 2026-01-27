@@ -78,7 +78,6 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     private T getEntity(ResultSet resultSet) {
         try {
-            /*
             T inst = entityClassMetaData.getConstructor().newInstance();
             List<Field> fields = entityClassMetaData.getAllFields();
             for (Field field : fields) {
@@ -88,15 +87,6 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                 field.set(inst, fieldValue);
             }
             return inst;
-            */
-            List<Object> instanceFieldValues = new ArrayList<>();
-            instanceFieldValues.add(
-                    resultSet.getObject(entityClassMetaData.getIdField().getName()));
-            List<Field> nonIdFields = entityClassMetaData.getFieldsWithoutId();
-            for (Field field : nonIdFields) {
-                instanceFieldValues.add(resultSet.getObject(field.getName()));
-            }
-            return entityClassMetaData.getConstructor().newInstance(instanceFieldValues.toArray());
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }
