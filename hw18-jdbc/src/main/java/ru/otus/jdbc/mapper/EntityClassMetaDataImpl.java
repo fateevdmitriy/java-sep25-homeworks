@@ -9,13 +9,18 @@ import ru.otus.annotations.Id;
 
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private final Class<T> clazz;
+    private final Field idField;
     private final List<Field> allFields;
+    private final List<Field> fieldsWithoutId;
 
     public EntityClassMetaDataImpl(Class<T> clazz) {
         this.clazz = clazz;
         this.allFields = initAllFields(clazz);
+        this.idField = initIdField();
+        this.fieldsWithoutId = initFieldsWithoutId();
     }
 
+    @Override
     public Constructor<T> getConstructor() throws NoSuchMethodException {
         return clazz.getConstructor();
     }
@@ -29,10 +34,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     // Аннотацию @Id надо сделать самостоятельно
     @Override
     public Field getIdField() {
-        return allFields.stream()
-                .filter(field -> field.isAnnotationPresent(Id.class))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Field annotated with @Id is not found."));
+        return idField;
     }
 
     @Override
@@ -42,12 +44,23 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        return allFields.stream()
-                .filter(field -> !field.isAnnotationPresent(Id.class))
-                .toList();
+        return fieldsWithoutId;
     }
 
     private List<Field> initAllFields(Class<T> clazz) {
         return new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+    }
+
+    private Field initIdField() {
+        return allFields.stream()
+                .filter(field -> field.isAnnotationPresent(Id.class))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Field annotated with @Id is not found."));
+    }
+
+    private List<Field> initFieldsWithoutId() {
+        return allFields.stream()
+                .filter(field -> !field.isAnnotationPresent(Id.class))
+                .toList();
     }
 }
