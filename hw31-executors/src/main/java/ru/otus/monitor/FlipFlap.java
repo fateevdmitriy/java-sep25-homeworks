@@ -7,6 +7,7 @@ public class FlipFlap {
     private static final Logger logger = LoggerFactory.getLogger(FlipFlap.class);
     private static final int MIN = 1;
     private static final int MAX = 10;
+    private int counter = MIN;
     private int lastIndex = 2;
     private boolean isDirectOrder = true;
 
@@ -19,22 +20,20 @@ public class FlipFlap {
                     this.wait();
                 }
 
-                if (isDirectOrder) {
-                    for (int i = MIN; i <= MAX; i++) {
-                        logger.info("[{}]: {} ", index, i);
-                    }
-                } else {
-                    for (int i = MAX; i >= MIN; i--) {
-                        logger.info("[{}]: {} ", index, i);
-                    }
-                }
+                logger.info("[{}]: {} ", index, counter);
                 if (index > lastIndex) {
-                    isDirectOrder = !isDirectOrder;
+                    if (isDirectOrder) {
+                        counter++;
+                    } else {
+                        counter--;
+                    }
+                    if (counter == MIN || counter == MAX) {
+                        isDirectOrder = !isDirectOrder;
+                    }
                 }
                 lastIndex = index;
                 sleep();
                 notifyAll();
-                logger.info("after notify");
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
