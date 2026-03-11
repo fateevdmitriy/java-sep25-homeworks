@@ -9,6 +9,7 @@ include("hw15-patterns")
 include("hw16-io")
 include("hw18-jdbc")
 include("hw18-jdbc:demo")
+include("hw31-executors")
 
 pluginManagement {
     val jgitver: String by settings
