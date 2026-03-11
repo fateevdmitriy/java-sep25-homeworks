@@ -15,7 +15,7 @@ public class Phone {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column // (name="number")
+    @Column
     private String number;
 
     @ManyToOne(cascade = CascadeType.ALL)

@@ -15,24 +15,11 @@ public class Address {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column // (name = "street")
+    @Column
     private String street;
-
-    /*
-    @OneToOne(mappedBy = "address")
-    private Client client;
-    */
 
     public Address(Long id, String street) {
         this.id = id;
         this.street = street;
     }
-
-    /*
-    public Address(Long id, String street, Client client) {
-        this.id = id;
-        this.street = street;
-        this.client = client;
-    }
-     */
 }
